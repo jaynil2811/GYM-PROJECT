@@ -1,0 +1,30 @@
+#togglePassword {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+
+var pass_vis;
+
+function passvis(){
+    if (pass_vis) {
+        document.getElementById("pswd").type = "password";
+        document.getElementById("togglePassword").classList.remove("fa-eye");
+        document.getElementById("togglePassword").classList.add("fa-eye-slash");
+        pass_vis = false;
+    } else {
+        document.getElementById("pswd").type = "text";
+        document.getElementById("togglePassword").classList.remove("fa-eye-slash");
+        document.getElementById("togglePassword").classList.add("fa-eye");
+        pass_vis = true;
+    }
+}
+
+<div class="input-field">
+    <i class="fas fa-lock"></i>
+    <input type="password" placeholder="Password" name="password" id="pswd" required />
+    <i class="fas fa-eye" id="togglePassword" onclick="passvis()"></i>
+</div>

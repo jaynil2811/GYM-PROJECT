@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- <link rel="stylesheet" href="css/chatbot.css" media="screen" /> -->
+  <title>Document</title>
+  <style>
+    /* Imports */
+/* -------------------------------------- */
+@import "https://fonts.googleapis.com/css?family=Noto+Sans";
+
+/* Body */
+/* -------------------------------------- */
+.chat-submit {
+  position: absolute;
+  right: 10px; /* Adjusted value */
+  bottom: 10px; /* Adjusted value */
+  padding: 8px 20px; /* Adjusted values */
+  border: none;
+  border-radius: 5px;
+  background-color: #0a76d5;
+  color: #fff;
+  font: 16px/20px "Noto Sans", sans-serif;
+  cursor: pointer;
+  outline: none;
+}
+
+.chat-submit:hover {
+  background-color: #0f2df2;
+}
+
+.chat-submit:active {
+  background-color: #183ae1;
+}
+body {
+  padding: 0;
+  margin: 0;
+  background-image: url(img/bg_2.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* background: -moz-linear-gradient(
+    -45deg,
+    #2197f0 0,
+    #183850 25%,
+    #1f6cd6 50%,
+    #22254c 75%,
+    #22254c 100%
+  );
+  background: -webkit-linear-gradient(
+    -45deg,
+    #183850 0,
+    #183850 25%,
+    #192c46 50%,
+    #22254c 75%,
+    #22254c 100%
+  ); */
+  /* background-repeat: no-repeat; */
+  /* background-attachment: fixed; */
+}
+
+/* Scrollbar */
+/* -------------------------------------- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(25, 147, 147, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(25, 147, 147, 0.2);
+}
+
+/* Chat Thread */
+/* -------------------------------------- */
+.chat-thread {
+  /* width: 585px; */
+  margin: 24px auto 0 auto;
+  padding: 0 20px 0 0;
+  list-style: none;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.chat-thread li {
+  position: relative;
+  clear: both;
+  display: inline-block;
+  padding: 16px 40px 16px 20px;
+  margin: 0 0 20px 0;
+  font: 16px/20px "Noto Sans", sans-serif;
+  border-radius: 10px;
+  background-color: rgba(25, 147, 147, 0.2);
+}
+
+/* Chat Avatar */
+/* -------------------------------------- */
+.chat-thread li:before {
+  position: absolute;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  content: "";
+}
+.chat-window-message::placeholder {
+  color: rgba(47, 45, 45, 0.162);
+}
+/* Chat Speech Bubble Arrow */
+/* -------------------------------------- */
+.chat-thread li:after {
+  position: absolute;
+  top: 15px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 15px solid rgba(25, 147, 147, 0.2);
+}
+
+/* Chat Thread Odd */
+/* -------------------------------------- */
+.chat-thread li:nth-child(odd) {
+  animation: show-chat-odd 0.15s 1 ease-in;
+  -moz-animation: show-chat-odd 0.15s 1 ease-in;
+  -webkit-animation: show-chat-odd 0.15s 1 ease-in;
+  float: right;
+  margin-right: 80px;
+  /* Adjusted value */
+  color: #12fff7;
+}
+
+.chat-thread li:nth-child(odd):before {
+  right: -80px;
+  /* Adjusted value */
+  background-image: url(../img/User_img.png);
+  background-repeat: no-repeat;
+}
+
+.chat-thread li:nth-child(odd):after {
+  border-right: 15px solid transparent;
+  right: -15px;
+}
+
+/* Chat Thread Even */
+/* -------------------------------------- */
+.chat-thread li:nth-child(even) {
+  animation: show-chat-even 0.15s 1 ease-in;
+  -moz-animation: show-chat-even 0.15s 1 ease-in;
+  -webkit-animation: show-chat-even 0.15s 1 ease-in;
+  float: left;
+  margin-left: 80px;
+  /* Adjusted value */
+  color: #fefffee2;
+} 
+
+.chat-thread li:nth-child(even):before {
+  left: -80px;
+  /* Adjusted value */
+  background-image: url(../img/Robot_logo.png);
+  background-repeat: no-repeat;
+}
+
+.chat-thread li:nth-child(even):after {
+  border-left: 15px solid transparent;
+  left: -15px;
+}
+
+/* Chat Window */
+/* -------------------------------------- */
+.chat-window {
+  position: fixed;
+  bottom: 18px;
+  left: 25%;
+  /* Adjusted value */
+  width: 50%;
+  /* Adjusted value */
+}
+
+.chat-window-message {
+  width: 100%;
+  height: 48px;
+  font: 32px/48px "Noto Sans", sans-serif;
+  background: none;
+  color: #fafafa;
+  border: 0;
+  border-bottom: 1px solid rgba(25, 147, 147, 0.2);
+  outline: none;
+}
+
+/* Responsive */
+/* -------------------------------------- */
+/* Small screens */
+@media all and (max-width: 767px) {
+  .chat-thread {
+    width: 90%;
+    height: 260px;
+  }
+
+  .chat-window {
+    left: 5%;
+    width: 90%;
+  }
+}
+
+/* Medium and large screens */
+@media all and (min-width: 768px) {
+  .chat-thread {
+    width: 50%;
+    height: 500px;
+  }
+
+  .chat-window {
+    left: 25%;
+    width: 50%;
+  }
+}
+
+/* Animation */
+/* -------------------------------------- */
+@keyframes show-chat-even {
+  0% {
+    margin-left: -480px;
+  }
+
+  100% {
+    margin-left: 0;
+  }
+}
+
+@-moz-keyframes show-chat-even {
+  0% {
+    margin-left: -480px;
+  }
+
+  100% {
+    margin-left: 0;
+  }
+}
+
+@-webkit-keyframes show-chat-even {
+  0% {
+    margin-left: -480px;
+  }
+
+  100% {
+    margin-left: 0;
+  }
+}
+
+@keyframes show-chat-odd {
+  0% {
+    margin-right: -480px;
+  }
+
+  100% {
+    margin-right: 0;
+  }
+}
+
+@-moz-keyframes show-chat-odd {
+  0% {
+    margin-right: -480px;
+  }
+
+  100% {
+    margin-right: 0;
+  }
+}
+
+@-webkit-keyframes show-chat-odd {
+  0% {
+    margin-right: -480px;
+  }
+
+  100% {
+    margin-right: 0;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <ul class="chat-thread">
+    <li>Hi Sir, Welcome to Our GYM ! [ Iconic Muscle Gym ]</li>
+    <li>Good Morning !</li>
+    <li>Good Morning !! What can i help you ?</li>
+  </ul>
+
+  <form class="chat-window">
+    <input
+      class="chat-window-message"
+      name="chat-window-message"
+      type="text"
+      autocomplete="off"
+      autofocus
+      placeholder=" Ask me Questions ? "
+    /> 
+    <button type="submit" class="chat-submit">Send</button>
+    <!-- Added class="chat-submit" -->
+  </form>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const chatThread = document.querySelector('.chat-thread');
+    const chatInput = document.querySelector('.chat-window-message');
+  
+    const responses = {
+  "hi": "Hello! Welcome to Iconic Muscle Gym. How can I assist you today?",
+  "timing": "Our gym is open from 6:00 AM to 10:00 PM every day.",
+  "membership": "We offer various membership plans tailored to your needs. Would you like to know more about them? Contact: 84011224434",
+  "class": "Yes, we have a variety of classes including yoga, spin, and strength training. Would you like to know the schedule?",
+  "location": "203, Scarlet Business Hub, Opposite Ankur High School, near Paldi, Bhatta, Paldi, Ahmedabad, Gujarat 380007",
+  "contact": "You can reach us at +91 8401122443 or via email at info@iconicmuscle.com. How else can I assist you?",
+  "food": "We provide dietary advice and may recommend certain meal plans tailored to your fitness goals. Would you like more information about our nutrition services?",
+  "products": "We offer a range of supplements and fitness products to support your training. Feel free to inquire about specific products or recommendations.",
+  "time": "Our gym timings are from 6:00 AM to 10:00 PM every day. Is there anything else you'd like to know about our schedule?",
+  "personal trainer": "Yes, we have certified personal trainers available to help you achieve your fitness goals. Would you like to book a session? Our Partners: 1. Riyaz Shaikh 2. Mohmmad Khan Pathan",
+  "group classes": "Absolutely! We offer various group classes suitable for all fitness levels. Would you like to know the class schedule?",
+  "holiday hours": "During holidays, our gym hours may vary. It's best to check our website or contact us directly for holiday hours. Is there anything else you'd like to know?",
+  "price": "Our Package Price is Around 699/- 1399/- and 5999/- for a 1 Month, 3 Month, and 1-year Plan as per Gym.",
+  "package": "Our Package Price is Around 699/- 1399/- and 5999/- for a 1 Month, 5 Month, and 1-year Plan as per Gym.",
+  "facilities": "Our facilities are top-rated in our area. We offer a wide range of equipment and amenities to support your fitness journey.",
+  "diet for weightloss": "we suggest to avoid Carbodated food and oily food and must be suggest helthy food(its include protine and vitamins)",
+  "parking": "Yes, we have parking available for our members.",
+  "diet for weightgain": "we suggest Eat food with high protines and maintain to eat balance calories food ..",
+  "trial": "Yes, we offer trial periods for those interested in trying out our gym before committing to a membership.",
+  "age restriction": "Our minimum age requirement for membership is 16 years old.",
+  "dress code": "While there's no strict dress code, we recommend wearing appropriate workout attire for your comfort and safety.",
+  "instructors": "Our instructors are certified and experienced in guiding members through their fitness journey. They're here to assist you with proper form and technique.",
+  "guest policy": "We allow guests to accompany members, although there may be restrictions or fees involved. Please inquire at the front desk for more information.",
+  "cancellation policy": "Our cancellation policy is outlined in the membership agreement. Please review it for details.",
+  "beginner classes": "Yes, we offer classes specifically designed for beginners to help them get started on their fitness journey.",
+  "rehabilitation services": "We work with certified professionals to offer rehabilitation services for those recovering from injuries or looking to improve mobility.",
+  "website": "Yes, we have a website where you can find more information about our gym, including class schedules, membership options, and contact details.",
+  "app": "We're in the process of developing a mobile app to make it easier for our members to access gym information and services on the go.",
+  "kids area": "We don't have a designated kids' play area, but children are welcome to accompany their parents to the gym.",
+  "sauna steam room": "Yes, we have sauna and steam room facilities available for our members to relax and unwind after their workouts.",
+  "special programs events": "We regularly host special events and programs such as fitness challenges, workshops, and seminars. Stay tuned to our website and social media for updates.",
+  "wifi": "Yes, we offer free Wi-Fi access for our members.",
+  "gender specific areas": "We don't have gender-specific areas, as our gym is open to all members regardless of gender.",
+  "discounts": "We offer discounts for students, seniors, and corporate memberships. Please inquire at the front desk for more information.",
+  "feedback": "We welcome feedback from our members to help us improve our services and facilities. Please don't hesitate to share your thoughts with us.",
+  "cleanliness": "We take cleanliness and hygiene seriously, and our staff works diligently to maintain a clean and sanitary environment for our members.",
+  "community": "Our gym is more than just a place to work out; it's a community of like-minded individuals dedicated to living a healthy lifestyle. Join us and be a part of our fitness family!",
+  "health safety measures": "We've implemented various health and safety measures to ensure the well-being of our members, including regular cleaning and sanitization, social distancing protocols, and mask requirements in common areas.",
+  "membership benefits": "As a member, you'll enjoy access to our state-of-the-art facilities, expert guidance from our certified trainers, and a supportive community to help you reach your fitness goals.",
+  "member events": "We regularly organize member-exclusive events such as fitness challenges, seminars, and social gatherings to foster a sense of community and camaraderie among our members.",
+  "social media": "Stay connected with us on social media for the latest updates, workout tips, and exclusive offers!",
+  "online resources": "We provide online resources such as workout plans, nutrition tips, and exercise tutorials to help our members stay on track with their fitness goals, even when they can't make it to the gym.",
+  "customer service": "Our friendly and knowledgeable staff are here to assist you with any questions or concerns you may have. Your satisfaction is our top priority!",
+  "privacy policy": "We respect your privacy and are committed to protecting your personal information. Our privacy policy outlines how we collect, use, and safeguard your data.",
+  "equipment maintenance": "We regularly inspect and maintain our equipment to ensure it's in top condition for our members to use safely and effectively.",
+  "community engagement": "We're actively involved in the local community through partnerships, sponsorships, and outreach programs aimed at promoting health and wellness.",
+  "success stories": "Check out our success stories to see how our members have transformed their lives through fitness. You could be next!",
+  "competition prep": "Our experienced trainers can help you prepare for competitions, whether you're a seasoned athlete or competing for the first time.",
+  "training techniques": "Learn advanced training techniques and strategies from our certified trainers to take your workouts to the next level and achieve your fitness goals faster.",
+  "goal setting": "Set realistic and achievable fitness goals with the help of our trainers, and track your progress along the way to stay motivated and accountable.",
+  "mental health support": "We understand the importance of mental health in overall well-being and offer resources and support to help our members manage stress and improve their mental well-being.",
+  "post workout recovery": "Maximize your post-workout recovery with our recovery services, including foam rolling, stretching, and massage therapy, to reduce soreness and improve muscle recovery.",
+  "hydration station": "Stay hydrated during your workouts with our hydration station, stocked with water and sports drinks to keep you energized and refreshed.",
+  "exercise variety": "Keep your workouts fun and exciting with a variety of exercise options, including weightlifting, cardio, group classes, and outdoor activities.",
+  "community events": "Join us for community events such as charity runs, fitness challenges, and outdoor workouts to connect with other members and give back to the community.",
+  "nutrition workshops": "Attend our nutrition workshops to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "flexibility training": "Improve your flexibility, mobility, and range of motion with our flexibility training classes and stretching routines.",
+  "strength training": "Build strength and muscle mass with our strength training programs, tailored to your fitness level and goals.",
+  "cardio workouts": "Burn calories and improve cardiovascular health with our cardio workouts, including running, cycling, and HIIT training.",
+  "weight loss programs": "Achieve your weight loss goals with our customized weight loss programs, combining exercise, nutrition, and lifestyle changes for long-term success.",
+  "muscle building programs": "Gain lean muscle mass and sculpt your physique with our muscle building programs, designed to optimize muscle growth and definition.",
+  "functional training": "Enhance your functional fitness and performance in everyday activities with our functional training exercises and movements.",
+  "rehabilitation exercises": "Recover from injuries and prevent future injuries with our rehabilitation exercises and injury prevention techniques, overseen by our experienced trainers.",
+  "yoga classes": "Find balance, flexibility, and inner peace with our yoga classes, suitable for all levels from beginners to advanced practitioners.",
+  "spin classes": "Get your heart pumping and burn calories with our spin classes, led by motivating instructors and set to energizing music.",
+  "boxing classes": "Release stress and build strength with our boxing classes, combining cardio, strength training, and boxing techniques for a full-body workout.",
+  "pilates classes": "Strengthen your core, improve your posture, and increase flexibility with our Pilates classes, focusing on controlled movements and mindful breathing.",
+  "bootcamp classes": "Challenge yourself with our bootcamp classes, featuring high-intensity interval training, strength exercises, and teamwork to push your limits and achieve results.",
+  "dance classes": "Have fun and burn calories with our dance classes, featuring a variety of dance styles and music genres to keep you moving and grooving.",
+  "stretching classes": "Relieve tension, improve flexibility, and prevent injuries with our stretching classes, incorporating dynamic and static stretches for a full-body stretch.",
+  "senior fitness classes": "Stay active and healthy with our senior fitness classes, specifically designed for older adults to improve strength, balance, and mobility.",
+  "student discounts": "We offer special discounts for students with a valid student ID. Contact us for more information on our student membership options.",
+  "corporate memberships": "We offer corporate membership packages for companies looking to promote employee health and wellness. Inquire about our corporate rates and benefits.",
+  "member referral program": "Refer a friend to join our gym and receive exclusive rewards and discounts as part of our member referral program. It's our way of saying thank you for spreading the word about us!",
+  "family memberships": "Save money and stay fit together with our family membership packages, offering discounted rates for families and couples.",
+  "community outreach programs": "We're committed to giving back to the community through various outreach programs and initiatives focused on health, fitness, and wellness.",
+  "online coaching": "Get personalized coaching and support from our certified trainers through our online coaching programs, tailored to your individual needs and goals.",
+  "virtual classes": "Stay active and connected from the comfort of your home with our virtual classes, featuring live-streamed workouts and interactive training sessions.",
+  "member rewards program": "Join our member rewards program and earn points for every workout, class attended, or product purchased. Redeem your points for exclusive rewards, discounts, and perks!",
+  "social events": "Join us for social events such as member mixers, holiday parties, and fitness challenges to connect with other members and have fun outside of the gym.",
+  "group training sessions": "Train with friends, family, or coworkers in our group training sessions, featuring personalized workouts and group accountability to help you stay motivated and on track.",
+  "nutrition coaching": "Get expert guidance and support to improve your nutrition habits and achieve your health and fitness goals with our nutrition coaching programs.",
+  "mindfulness meditation classes": "Reduce stress, improve focus, and enhance mental well-being with our mindfulness meditation classes, offering guided meditation and relaxation techniques.",
+  "specialized equipment": "Our gym is equipped with specialized equipment for specific training needs, such as powerlifting, Olympic lifting, and functional fitness.",
+  "sports performance training": "Take your athletic performance to the next level with our sports performance training programs, focusing on strength, speed, agility, and endurance.",
+  "bootcamp workouts": "Challenge yourself with our bootcamp workouts, featuring a mix of cardio, strength, and agility exercises to burn fat and build muscle.",
+  "community support": "Join our community of members who support and motivate each other to achieve their fitness goals. Together, we're stronger!",
+  "health assessments": "Get a comprehensive health assessment to identify your baseline fitness level, set realistic goals, and track your progress over time.",
+  "goal tracking": "Track your progress towards your fitness goals with our goal tracking tools and support from our trainers to help you stay accountable and motivated.",
+  "fitness challenges": "Join our fitness challenges to push yourself, break through plateaus, and achieve new personal bests with the support of our trainers and fellow members.",
+  "workout plans": "Get personalized workout plans tailored to your fitness goals, schedule, and preferences to optimize your training and maximize results.",
+  "nutrition plans": "Receive customized nutrition plans based on your dietary preferences, goals, and lifestyle to fuel your workouts and optimize your health.",
+  "motivational support": "Stay motivated and inspired on your fitness journey with our motivational support, including encouragement from our trainers and fellow members.",
+  "member portal": "Access our member portal to view class schedules, book appointments, track workouts, and connect with other members online.",
+  "member spotlight": "Celebrate your achievements and inspire others with our member spotlight feature, highlighting success stories, transformations, and personal milestones.",
+  "fitness assessments": "Get regular fitness assessments to track your progress, identify areas for improvement, and adjust your training program accordingly.",
+  "nutrition counseling": "Receive one-on-one nutrition counseling sessions with our certified nutritionists to address your specific dietary needs and goals.",
+  "supplement advice": "Get expert advice on supplements to support your fitness goals, including recommendations on timing, dosage, and product selection.",
+  "weight management programs": "Achieve and maintain a healthy weight with our weight management programs, combining exercise, nutrition, and behavior modification strategies.",
+  "muscle recovery techniques": "Accelerate muscle recovery and reduce soreness with our muscle recovery techniques, including foam rolling, massage therapy, and compression therapy.",
+  "performance assessments": "Assess your athletic performance with our performance assessments, measuring key indicators such as strength, speed, agility, and endurance.",
+  "functional movement screenings": "Identify movement dysfunctions and imbalances with our functional movement screenings, helping to prevent injuries and optimize performance.",
+  "sports specific training": "Enhance your athletic performance in specific sports with our sports-specific training programs, tailored to the demands of your sport and position.",
+  "recovery services": "Recover faster and prevent injuries with our recovery services, including cryotherapy, compression therapy, and cold tub immersion.",
+  "mind-body classes": "Find balance and inner peace with our mind-body classes, including yoga, Pilates, and meditation, designed to reduce stress and improve mental well-being.",
+  "work-life balance workshops": "Learn strategies for managing stress, improving work-life balance, and prioritizing self-care with our workshops and seminars.",
+  "nutrition seminars": "Attend our nutrition seminars to learn about the latest research and trends in nutrition, diet, and healthy eating habits.",
+  "weightlifting workshops": "Improve your lifting technique, learn new exercises, and get expert advice from our weightlifting workshops, led by certified strength coaches.",
+  "injury prevention programs": "Reduce your risk of injury and stay healthy with our injury prevention programs, focusing on mobility, stability, and proper movement mechanics.",
+  "mobility drills": "Improve joint mobility and flexibility with our mobility drills, targeting key areas such as hips, shoulders, and ankles for better movement quality.",
+  "functional movement exercises": "Enhance your functional fitness and movement efficiency with our functional movement exercises, mimicking real-life activities and movements.",
+  "group training classes": "Train with a group of like-minded individuals in our group training classes, featuring a mix of strength, cardio, and flexibility exercises for a full-body workout.",
+  "nutrition workshops": "Learn how to fuel your body for optimal performance and health with our nutrition workshops, covering topics such as meal planning, macronutrients, and hydration.",
+  "recovery strategies": "Recover faster and perform better with our recovery strategies, including foam rolling, stretching, ice baths, and massage therapy.",
+  "performance enhancement": "Maximize your athletic performance with our performance enhancement programs, focusing on strength, power, speed, agility, and endurance.",
+  "member rewards": "Earn rewards for your loyalty and dedication to your fitness goals with our member rewards program, offering discounts, freebies, and exclusive perks.",
+  "community events": "Connect with other members and build lasting friendships at our community events, including group workouts, social gatherings, and charity fundraisers.",
+  "member appreciation": "We appreciate our members and value their commitment to their fitness journey. Join us for member appreciation events and special discounts as our way of saying thank you!",
+  "progress tracking": "Track your progress and celebrate your achievements with our progress tracking tools, including fitness assessments, goal setting, and workout logs.",
+  "nutrition coaching": "Receive personalized nutrition coaching from our certified nutritionists to optimize your diet, fuel your workouts, and achieve your health and fitness goals.",
+  "wellness programs": "Improve your overall well-being with our wellness programs, focusing on stress management, sleep quality, mindfulness, and work-life balance.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums.",
+  "exercise variety": "Keep your workouts fun and challenging with a variety of exercise options, including strength training, cardio, flexibility, and functional movements.",
+  "health education": "Empower yourself with knowledge and information about health, fitness, and nutrition through our health education resources, workshops, and seminars.",
+  "personalized workouts": "Receive personalized workout plans tailored to your fitness level, goals, and preferences to maximize your results and minimize your risk of injury.",
+  "fitness challenges": "Challenge yourself and push your limits with our fitness challenges, designed to motivate you, keep you accountable, and help you reach new milestones.",
+  "community support": "Join our supportive community of members who are on a similar fitness journey as you. Together, we'll celebrate successes, overcome challenges, and achieve our goals!",
+  "ongoing support": "Receive ongoing support and encouragement from our trainers, staff, and fellow members to help you stay motivated, focused, and on track with your fitness goals.",
+  "health coaching": "Get personalized health coaching from our certified professionals to address your unique needs and goals, whether it's weight loss, stress management, or chronic disease prevention.",
+  "exercise classes": "Take your workouts to the next level with our exercise classes, featuring a variety of formats and styles to keep you engaged and challenged.",
+  "member perks": "Enjoy exclusive perks and benefits as a member, including discounts on merchandise, priority booking for classes, and access to member-only events.",
+  "workout buddies": "Find workout buddies and accountability partners among our members to help you stay motivated, committed, and consistent with your exercise routine.",
+  "group fitness": "Experience the energy and camaraderie of our group fitness classes, led by motivating instructors and set to energizing music.",
+  "nutrition guidance": "Receive expert guidance and support from our nutritionists to optimize your diet, fuel your workouts, and achieve your health and fitness goals.",
+  "specialized programs": "Participate in specialized programs and workshops tailored to your specific interests and goals, whether it's weight loss, muscle building, or athletic performance.",
+  "personalized support": "Get personalized support and attention from our trainers to ensure you're using proper form, technique, and intensity during your workouts.",
+  "family-friendly environment": "Feel at home in our family-friendly environment, where members of all ages and fitness levels are welcome and supported in their fitness journey.",
+  "equipment orientation": "Receive a thorough orientation on how to properly use our equipment to maximize your workouts and minimize your risk of injury.",
+  "performance tracking": "Track your progress and monitor your performance with our performance tracking tools, including workout logs, progress photos, and fitness assessments.",
+  "goal setting": "Set SMART goals (Specific, Measurable, Achievable, Relevant, Time-bound) with the help of our trainers to keep you focused, motivated, and accountable.",
+  "community events": "Connect with other members and build friendships at our community events, including group workouts, social gatherings, and charity fundraisers.",
+  "member discounts": "Take advantage of member discounts on merchandise, supplements, and services offered by our gym and partner businesses.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "nutrition counseling": "Get personalized nutrition counseling from our registered dietitians to develop healthy eating habits, fuel your workouts, and achieve your weight loss goals.",
+  "personalized programming": "Receive personalized programming tailored to your individual needs, goals, and preferences to optimize your results and enhance your overall well-being.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member benefits": "Enjoy a range of member benefits, including access to our state-of-the-art facilities, expert guidance from certified trainers, and exclusive discounts on products and services.",
+  "ongoing motivation": "Stay motivated and inspired with ongoing support and encouragement from our trainers, staff, and fellow members to help you reach your fitness goals.",
+  "workout variety": "Experience a wide variety of workouts and training modalities to keep your workouts fresh, challenging, and effective.",
+  "nutrition guidance": "Receive expert nutrition guidance and support from our registered dietitians to optimize your eating habits, fuel your workouts, and improve your overall health.",
+  "progress tracking": "Track your progress, celebrate your successes, and stay accountable to your goals with our progress tracking tools and support from our trainers.",
+  "exercise classes": "Participate in a variety of exercise classes led by motivating instructors, including strength training, cardio, yoga, and Pilates.",
+  "personalized attention": "Receive personalized attention and support from our trainers to ensure you're using proper form, technique, and intensity during your workouts.",
+  "member community": "Join our member community and connect with other like-minded individuals who share your passion for health, fitness, and personal growth.",
+  "group support": "Find support, motivation, and accountability from our group fitness classes, where you'll sweat, smile, and succeed together with your fellow members.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get expert nutrition coaching and support from our registered dietitians to develop healthy eating habits, achieve your weight loss goals, and improve your overall well-being.",
+  "personalized plans": "Receive personalized workout and nutrition plans tailored to your specific goals, preferences, and lifestyle to maximize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set achievable goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness goals with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+  "member engagement": "Stay engaged and connected with our member community through social events, group workouts, and online forums to enhance your fitness journey.",
+  "nutrition coaching": "Get personalized nutrition coaching and support from our registered dietitians to optimize your eating habits, fuel your workouts, and achieve your health goals.",
+  "personalized programming": "Receive customized workout and nutrition plans tailored to your individual needs, goals, and preferences to optimize your results and satisfaction.",
+  "fitness assessments": "Assess your current fitness level, identify areas for improvement, and set realistic goals with our fitness assessments and evaluations.",
+  "member rewards": "Earn rewards and incentives for your dedication and commitment to your fitness journey with our member rewards program.",
+  "social events": "Connect with other members and build friendships at our social events, including group workouts, happy hours, and community service projects.",
+  "nutrition workshops": "Attend our nutrition workshops and seminars to learn about healthy eating habits, meal planning, and dietary strategies to support your fitness goals.",
+  "supportive environment": "Feel supported and encouraged in our inclusive and welcoming environment, where every member is valued and respected.",
+  "exercise variety": "Enjoy a wide variety of exercise options and training modalities to keep your workouts exciting, challenging, and effective.",
+  "progress tracking": "Track your progress, celebrate your achievements, and stay motivated with our progress tracking tools and support from our trainers.",
+  "goal setting": "Set specific, measurable, achievable, relevant, and time-bound goals with the guidance of our trainers to keep you focused and motivated.",
+  "community support": "Find support, motivation, and accountability from our community of members who share your passion for health, fitness, and personal growth.",
+    };
+  
+    function addMessageToThread(message, sender) {
+        
+        const newMessage = document.createElement('li');
+        newMessage.textContent = message;
+        if (sender === 'user') {
+            newMessage.classList.add('user');
+        } else {
+            newMessage.classList.add('bot');
+        }
+        chatThread.appendChild(newMessage);
+        // Scroll to the latest message
+        chatThread.scrollTop = chatThread.scrollHeight;
+    }
+  
+    function addThinkingMessage() {
+        const thinkingMessage = document.createElement('li');
+        thinkingMessage.textContent = "Thinking...🤖";
+        thinkingMessage.classList.add('bot', 'wobble-animation');
+        chatThread.appendChild(thinkingMessage);
+        // Scroll to the latest message
+        chatThread.scrollTop = chatThread.scrollHeight;
+    }
+  
+    function processUserInput(input) {
+        const userInput = input.toLowerCase().trim();
+        addMessageToThread(userInput, 'user');
+        addThinkingMessage(); // Display "Thinking...🤖" message
+        setTimeout(function() {
+            chatThread.removeChild(chatThread.lastChild); // Remove "Thinking...🤖" message
+            if (responses[userInput]) {
+                addMessageToThread(responses[userInput], 'bot');
+            } else {
+                addMessageToThread("I'm sorry, I didn't understand that. Could you please rephrase?", 'bot');
+            }
+            chatInput.value = '';
+        }, 2000); // 2000 milliseconds = 2 seconds (for testing, reduce the delay)
+    }
+  
+    document.querySelector('.chat-window').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userInput = chatInput.value;
+        processUserInput(userInput);
+    });
+  
+    // Initial greeting
+    addMessageToThread("Hi there! Welcome to Iconic Muscle Gym. How can I assist you today?", 'bot');
+  });
+  
+  </script>
+</body>
+</html>
+  
